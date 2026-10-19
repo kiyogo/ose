@@ -121,7 +121,6 @@
     content.appendChild(desc);
     content.appendChild(actions);
 
-    article.appendChild(iconWrap);
     article.appendChild(content);
 
     return article;
