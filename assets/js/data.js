@@ -120,8 +120,8 @@ const defaultProjects = [
     language_vi: "Rust",
     status: "verified",
     status_vi: "Đã phát hành",
-    iconType: "nom",
-    logo: "assets/icons/projects/nom.svg",
+    iconType: null,
+    logo: null,
     repository: "https://github.com/kiyogo/nom",
     website: "https://github.com/kiyogo/nom",
     documentation: "https://github.com/kiyogo/nom#readme",
@@ -157,7 +157,14 @@ try {
   if (cachedJson) {
     const parsed = JSON.parse(cachedJson);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      initialProjects = parsed;
+      initialProjects = parsed.map(function(p) {
+        if (p && (p.id === "nom" || p.name === "Nom")) {
+          p.logo = null;
+          p.logoSvg = null;
+          p.iconType = null;
+        }
+        return p;
+      });
     }
   }
 } catch (e) {

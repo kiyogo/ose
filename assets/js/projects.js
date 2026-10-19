@@ -23,142 +23,31 @@
   }
 
   /**
-   * Crisp, flat SVG Squircle App Icons matching Apple Open Source (Zero box-shadow)
-   * Supports local and remote SVG logos with automatic fallback
+   * Pure vector SVG / image logo rendering with NO background box
+   * If the project has no logo on GitHub, strictly returns empty string ""
    */
   function getProjectIconSvg(iconType, project) {
-    if (project) {
-      if (typeof project.logoSvg === "string" && project.logoSvg.trim().startsWith("<svg")) {
-        return project.logoSvg;
-      }
-      const logoUrl = project.logo || project.logoUrl || project.logoFallbackUrl;
-      if (logoUrl) {
-        return `<img src="${logoUrl}" alt="${project.name || 'Project'}" width="56" height="56" style="width: 56px; height: 56px; border-radius: 7px; object-fit: contain; display: block;" onerror="this.onerror=null; this.src='assets/icons/kiyo.svg';">`;
-      }
+    if (!project) return "";
+
+    // 1. Cleaned direct inline SVG (without background canvas box)
+    if (typeof project.logoSvg === "string" && project.logoSvg.trim().startsWith("<svg")) {
+      return project.logoSvg;
     }
 
-    const type = String(iconType || (project && project.id) || "").toLowerCase();
-
-    if (type === "zploy") {
-      return `<img src="assets/icons/projects/zploy.svg" alt="Zploy" width="56" height="56" style="width: 56px; height: 56px; border-radius: 7px; object-fit: contain; display: block;">`;
-    }
-    if (type === "catchim") {
-      return `<img src="assets/icons/projects/catchim.svg" alt="Catchim" width="56" height="56" style="width: 56px; height: 56px; border-radius: 7px; object-fit: contain; display: block;">`;
-    }
-    if (type === "nom") {
-      return `<img src="assets/icons/projects/nom.svg" alt="Nom" width="56" height="56" style="width: 56px; height: 56px; border-radius: 7px; object-fit: contain; display: block;">`;
+    // 2. Direct logo URL (SVG / PNG)
+    const logoUrl = project.logo || project.logoUrl;
+    if (logoUrl) {
+      return `<img src="${logoUrl}" alt="${project.name || 'Project'}" width="48" height="48" style="width: 48px; height: 48px; object-fit: contain; display: block; background: transparent !important; border: none !important; box-shadow: none !important;" onerror="this.onerror=null; if(this.parentElement) this.parentElement.style.display='none';">`;
     }
 
-    if (type === "swift") {
-      return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-        <defs>
-          <linearGradient id="swiftGrad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF633E"/>
-            <stop offset="1" stop-color="#F02B1D"/>
-          </linearGradient>
-        </defs>
-        <rect width="56" height="56" rx="7" fill="url(#swiftGrad)"/>
-        <path d="M43.2 36.4C40.6 40.5 36.1 44.2 30.5 46.2C25 48.1 18.5 47.7 13.2 45.3C20.1 44 26.3 40.2 30 34.9C31.2 33.2 32.1 31.2 32.5 29.2C27.8 31.7 22.3 32.8 16.9 32.3C23 28.9 27.9 23.6 30.6 17.2C31 16.2 31.3 15.1 31.6 14C26.4 16.4 20.7 17.3 15.1 16.5C20.9 12.7 25.5 6.9 28 0.4C17.3 7 10 17.5 8.7 30.2C10.5 36.2 14.9 41.4 20.7 44.2C27.2 47.3 35.1 47.2 41.4 44C42.7 43.3 43.9 42.5 45 41.6C43.8 37.7 42.8 33.7 43.8 29.5C42.8 31.9 42.5 34.3 43.2 36.4Z" fill="white"/>
-      </svg>`;
-    }
-
-    if (type === "container") {
-      return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-        <defs>
-          <linearGradient id="containerGrad" x1="0" y1="0" x2="0" y2="56" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#8896A6"/>
-            <stop offset="1" stop-color="#5C6877"/>
-          </linearGradient>
-        </defs>
-        <rect width="56" height="56" rx="7" fill="url(#containerGrad)"/>
-        <!-- 3 server rack units -->
-        <g fill="#2D3540" fill-opacity="0.88">
-          <rect x="9.5" y="11" width="37" height="9.5" rx="4.5"/>
-          <rect x="9.5" y="23.25" width="37" height="9.5" rx="4.5"/>
-          <rect x="9.5" y="35.5" width="37" height="9.5" rx="4.5"/>
-        </g>
-        <!-- LED indicator dots & ventilation lines -->
-        <circle cx="15.5" cy="15.75" r="1.8" fill="#93C5FD"/>
-        <circle cx="21" cy="15.75" r="1.8" fill="#94A3B8"/>
-        <rect x="27" y="14.25" width="15" height="3" rx="1.5" fill="#64748B"/>
-
-        <circle cx="15.5" cy="28" r="1.8" fill="#6EE7B7"/>
-        <circle cx="21" cy="28" r="1.8" fill="#94A3B8"/>
-        <rect x="27" y="26.5" width="15" height="3" rx="1.5" fill="#64748B"/>
-
-        <circle cx="15.5" cy="40.25" r="1.8" fill="#93C5FD"/>
-        <circle cx="21" cy="40.25" r="1.8" fill="#94A3B8"/>
-        <rect x="27" y="38.75" width="15" height="3" rx="1.5" fill="#64748B"/>
-      </svg>`;
-    }
-
-    if (type === "webkit") {
-      return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-        <defs>
-          <linearGradient id="webkitCompass" x1="14" y1="5" x2="42" y2="33" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#38A2FF"/>
-            <stop offset="1" stop-color="#0066CC"/>
-          </linearGradient>
-        </defs>
-        <!-- Stepped isometric layers in warm gold/yellow -->
-        <path d="M28 35L45 42.5L28 50L11 42.5L28 35Z" fill="#D97706"/>
-        <path d="M28 29L45 36.5L28 44L11 36.5L28 29Z" fill="#F59E0B"/>
-        <path d="M28 23L45 30.5L28 38L11 30.5L28 23Z" fill="#FBBF24"/>
-        <!-- Blue circular compass -->
-        <circle cx="28" cy="18" r="14.5" fill="url(#webkitCompass)"/>
-        <circle cx="28" cy="18" r="13" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
-        <!-- Compass star pointer -->
-        <polygon points="28,7.5 30.8,15.5 38.5,18 30.8,20.5 28,28.5 25.2,20.5 17.5,18 25.2,15.5" fill="#FFFFFF"/>
-        <polygon points="28,7.5 30.8,15.5 28,18 25.2,15.5" fill="#EF4444"/>
-        <circle cx="28" cy="18" r="2.2" fill="#FFFFFF"/>
-      </svg>`;
-    }
-
-    if (type === "kernel" || type === "cpu") {
-      return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-        <defs>
-          <linearGradient id="kernelGrad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#6366F1"/>
-            <stop offset="1" stop-color="#4338CA"/>
-          </linearGradient>
-        </defs>
-        <rect width="56" height="56" rx="7" fill="url(#kernelGrad)"/>
-        <rect x="16" y="16" width="24" height="24" rx="5" stroke="white" stroke-width="2.5"/>
-        <rect x="22" y="22" width="12" height="12" rx="2" fill="white"/>
-        <path d="M22 10v4M28 10v4M34 10v4M22 42v4M28 42v4M34 42v4M10 22h4M10 28h4M10 34h4M42 22h4M42 28h4M42 34h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
-    }
-
-    if (type === "cli" || type === "terminal") {
-      return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-        <defs>
-          <linearGradient id="cliGrad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#334155"/>
-            <stop offset="1" stop-color="#0F172A"/>
-          </linearGradient>
-        </defs>
-        <rect width="56" height="56" rx="7" fill="url(#cliGrad)"/>
-        <path d="M18 20l8 8-8 8M30 36h10" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
-    }
-
-    // Default AI
-    return `<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
-      <defs>
-        <linearGradient id="aiGrad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#A855F7"/>
-          <stop offset="1" stop-color="#7C3AED"/>
-        </linearGradient>
-      </defs>
-      <rect width="56" height="56" rx="7" fill="url(#aiGrad)"/>
-      <path d="M28 12v32M12 28h32M16.7 16.7l22.6 22.6M39.3 16.7L16.7 39.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
-    </svg>`;
+    // 3. STRICT: No logo on GitHub -> return empty string!
+    return "";
   }
 
   /**
-   * Build project card matching the layout from user screenshot:
-   * - Flat white card, no border, no shadow
-   * - Protruding squircle app icon
+   * Build project card:
+   * - Flat transparent card, no border, no shadow
+   * - App Icon directly above title (only rendered if the project has a logo on GitHub!)
    * - Bold title, clean subtitle, description
    * - Blue pill action buttons (Chi tiết, Trang web / GitHub)
    */
@@ -172,10 +61,14 @@
     const article = document.createElement("article");
     article.className = "project-card";
 
-    // Protruding Squircle App Icon
-    const iconWrap = document.createElement("div");
-    iconWrap.className = "project-card__icon";
-    iconWrap.innerHTML = getProjectIconSvg(project.iconType, project);
+    // Direct App Icon (Only added if the project actually has a logo on GitHub!)
+    const hasLogo = Boolean(project.logoSvg || project.logo);
+    if (hasLogo) {
+      const iconWrap = document.createElement("div");
+      iconWrap.className = "project-card__icon";
+      iconWrap.innerHTML = getProjectIconSvg(project.iconType, project);
+      article.appendChild(iconWrap);
+    }
 
     // Card Content Wrapper
     const content = document.createElement("div");
@@ -746,7 +639,13 @@
 
     const logoEl = document.getElementById("detail-logo");
     if (logoEl) {
-      logoEl.innerHTML = getProjectIconSvg(project.iconType, project);
+      if (project.logoSvg || project.logo) {
+        logoEl.style.display = "inline-flex";
+        logoEl.innerHTML = getProjectIconSvg(project.iconType, project);
+      } else {
+        logoEl.style.display = "none";
+        logoEl.innerHTML = "";
+      }
     }
 
     const statusEl = document.getElementById("detail-status-badge");
@@ -898,134 +797,214 @@
   });
 
   /**
-   * Probes candidate SVG logo URLs for a repository.
-   * If an SVG is found, returns its URL.
+   * Cleans background canvas rects from an SVG so the logo emblem
+   * renders directly and cleanly on transparent background.
    */
-  async function detectRepoSvgLogo(repoName, branch) {
+  function cleanSvgBackground(svgText) {
+    if (!svgText || typeof svgText !== "string") return "";
+    let cleaned = svgText;
+
+    // 1. Remove background rect elements with solid fills or gradients (like #bg-canvas, #090D16, etc.)
+    cleaned = cleaned.replace(/<rect\b[^>]*?(?:fill=["'](?:url\(#[^"']*?bg[^"']*?\)|#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))["'][^>]*?\/?>)/gi, "");
+
+    // 2. Remove stroke rects around icon frames
+    cleaned = cleaned.replace(/<rect\b[^>]*?stroke=["'](?:rgba?\([^)]+\)|#[0-9a-fA-F]+)["'][^>]*?\/?>/gi, "");
+
+    // 3. Remove rect elements with large rounded corners like rx="124" or rx="122" or rx="12"
+    cleaned = cleaned.replace(/<rect\b[^>]*?rx=["'](?:124|122|120|12|14|16|20|7)["'][^>]*?\/?>/gi, "");
+
+    // 4. Remove any rect matching full dimensions (width=100%, 512, 56, etc.)
+    cleaned = cleaned.replace(/<rect\b[^>]*?(?:width=["'](?:100%|512|508|56|880)["'][^>]*?height=["'](?:100%|512|508|56|220)["'])[^>]*?\/?>/gi, "");
+
+    // 5. Ensure root SVG has transparent background, width 48, height 48
+    cleaned = cleaned.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
+      let mod = attrs.replace(/\bwidth=["'][^"']*?["']/gi, 'width="48"').replace(/\bheight=["'][^"']*?["']/gi, 'height="48"');
+      if (!/width=/i.test(mod)) mod += ' width="48"';
+      if (!/height=/i.test(mod)) mod += ' height="48"';
+      return `<svg ${mod} style="background: transparent !important; display: block;">`;
+    });
+
+    return cleaned;
+  }
+
+  /**
+   * Probes candidate SVG logo URLs on GitHub raw CDN for a repository.
+   * If an SVG is found, fetches and returns its clean, transparent SVG code and URL.
+   * If NO SVG logo exists on GitHub, strictly returns null.
+   */
+  async function detectAndFetchRepoSvgLogo(repoName, branch) {
     const br = branch || "main";
     const nameLower = repoName.toLowerCase();
 
-    // Check if we have a bundled local icon first
-    const localIcon = `assets/icons/projects/${nameLower}.svg`;
-    try {
-      const res = await fetch(localIcon, { method: "HEAD" });
-      if (res.ok) return localIcon;
-    } catch (e) {}
-
+    // Check GitHub raw CDN candidates
     const candidates = [
       `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/logo.svg`,
       `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/assets/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/assets/icons/logo.svg`,
       `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/public/assets/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/public/logo.svg`
+      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/docs/logo.svg`,
+      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/icon.svg`,
+      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/assets/icon.svg`
     ];
 
     for (const url of candidates) {
       try {
-        const res = await fetch(url, { method: "HEAD" });
+        const res = await fetch(url);
         if (res.ok) {
-          return url;
+          const text = await res.text();
+          if (text && text.includes("<svg")) {
+            return {
+              url: url,
+              svg: cleanSvgBackground(text)
+            };
+          }
         }
       } catch (e) {}
     }
-    return `assets/icons/projects/${nameLower}.svg`;
+
+    // Check bundled transparent local icons (only for repos that have an official logo)
+    if (nameLower !== "nom") {
+      const localIcon = `assets/icons/projects/${nameLower}.svg`;
+      try {
+        const res = await fetch(localIcon);
+        if (res.ok) {
+          const text = await res.text();
+          if (text && text.includes("<svg")) {
+            return {
+              url: localIcon,
+              svg: cleanSvgBackground(text)
+            };
+          }
+        }
+      } catch (e) {}
+    }
+
+    // STRICT: No logo found on GitHub -> return null
+    return null;
   }
 
   /**
    * Real-time GitHub Synchronizer:
-   * Dynamically fetches all repositories from https://github.com/kiyogo,
-   * auto-discovers .svg logos, merges them into KIYO_PROJECTS, and updates the UI live.
+   * Dynamically queries all repositories of https://github.com/kiyogo:
+   * - Automatically adds new projects added on GitHub
+   * - Automatically updates renamed projects
+   * - Automatically prunes deleted projects
+   * - Auto-detects .svg logos directly from GitHub with zero background box
+   * - If no logo on GitHub, strictly shows NO logo on the web
    */
   async function syncProjectsFromGitHub() {
     const GITHUB_API_URL = "https://api.github.com/users/kiyogo/repos?sort=updated&per_page=100";
     try {
-      const res = await fetch(GITHUB_API_URL, {
-        headers: { Accept: "application/vnd.github.v3+json" }
-      });
-      if (!res.ok) return;
+      let repos = [];
+      try {
+        const res = await fetch(GITHUB_API_URL, {
+          headers: { Accept: "application/vnd.github.v3+json" }
+        });
+        if (res.ok) {
+          repos = await res.json();
+        }
+      } catch (e) {
+        console.warn("Primary GitHub API fetch failed, trying orgs endpoint:", e);
+      }
 
-      const repos = await res.json();
-      if (!Array.isArray(repos)) return;
+      if (!Array.isArray(repos) || repos.length === 0) {
+        try {
+          const res2 = await fetch("https://api.github.com/orgs/kiyogo/repos?sort=updated&per_page=100", {
+            headers: { Accept: "application/vnd.github.v3+json" }
+          });
+          if (res2.ok) {
+            repos = await res2.json();
+          }
+        } catch (e2) {}
+      }
 
+      if (!Array.isArray(repos) || repos.length === 0) {
+        return; // Offline or rate limited, keep current state
+      }
+
+      // Filter out internal metadata repos (.github, etc.)
       const softwareRepos = repos.filter(function (r) {
-        return r && r.name && r.name !== ".github" && !r.fork && r.name.toLowerCase() !== "kiyogo";
+        return r && r.name && !r.name.startsWith(".") && !r.fork && r.name.toLowerCase() !== "kiyogo";
       });
 
-      let currentList = Array.isArray(window.KIYO_PROJECTS) ? [...window.KIYO_PROJECTS] : [];
-      let hasChanges = false;
+      // Build dictionary of base / rich details from defaultProjects & KIYO_PROJECTS
+      const baseMap = new Map();
+      if (typeof defaultProjects !== "undefined" && Array.isArray(defaultProjects)) {
+        defaultProjects.forEach(function (p) {
+          if (p.id) baseMap.set(p.id.toLowerCase(), p);
+          if (p.name) baseMap.set(p.name.toLowerCase(), p);
+        });
+      }
+      if (Array.isArray(window.KIYO_PROJECTS)) {
+        window.KIYO_PROJECTS.forEach(function (p) {
+          const key = (p.id || p.name || "").toLowerCase();
+          if (key && !baseMap.has(key)) baseMap.set(key, p);
+        });
+      }
+
+      // Build synced projects strictly from softwareRepos:
+      // - Deleted repos on GitHub -> naturally pruned (disappear from web!)
+      // - Renamed repos on GitHub -> updated with new repo.name!
+      // - Added repos on GitHub -> automatically added to the list!
+      const syncedList = [];
 
       for (const repo of softwareRepos) {
         const repoNameLower = repo.name.toLowerCase();
-        let existingIndex = currentList.findIndex(function (p) {
-          return (p.id && p.id.toLowerCase() === repoNameLower) || (p.name && p.name.toLowerCase() === repoNameLower);
-        });
+        const base = baseMap.get(repoNameLower) || {};
 
-        const detectedLogo = await detectRepoSvgLogo(repo.name, repo.default_branch);
+        // Probe GitHub for actual SVG logo in the repo
+        const logoData = await detectAndFetchRepoSvgLogo(repo.name, repo.default_branch || "main");
 
-        if (existingIndex !== -1) {
-          const p = currentList[existingIndex];
-          if (repo.description && (!p.description || p.description.length < repo.description.length)) {
-            p.description = repo.description;
-            hasChanges = true;
-          }
-          p.stars = repo.stargazers_count;
-          p.forks = repo.forks_count;
-          p.repository = repo.html_url;
-          if (repo.homepage) p.website = repo.homepage;
-          if (detectedLogo && (!p.logo || p.logo !== detectedLogo)) {
-            p.logo = detectedLogo;
-            hasChanges = true;
-          }
-        } else {
-          // Auto-add new repository
-          const newProject = {
-            id: repoNameLower,
-            name: repo.name,
-            name_vi: repo.name,
-            description: repo.description || "Open source project from KIYO",
-            description_vi: repo.description || "Dự án mã nguồn mở từ KIYO",
-            overview: repo.description || "Open source project from KIYO",
-            overview_vi: repo.description || "Dự án mã nguồn mở từ KIYO",
-            category: repo.topics && repo.topics.length ? repo.topics[0] : "Open Source",
-            category_vi: repo.topics && repo.topics.length ? repo.topics[0] : "Mã nguồn mở",
-            language: repo.language || "Open Source",
-            language_vi: repo.language || "Mã nguồn mở",
-            status: "verified",
-            status_vi: "Đã phát hành",
-            iconType: repoNameLower,
-            logo: detectedLogo,
-            repository: repo.html_url,
-            website: repo.homepage || repo.html_url,
-            documentation: `${repo.html_url}#readme`,
-            license: repo.license ? repo.license.spdx_id || repo.license.name : "MIT",
-            technologies: repo.topics && repo.topics.length ? repo.topics : [repo.language || "Open Source"],
-            features: [repo.description || "High-performance open-source project from KIYO"],
-            features_vi: [repo.description || "Dự án mã nguồn mở hiệu năng cao từ KIYO"],
-            gettingStarted: `git clone ${repo.html_url}.git\ncd ${repo.name}`,
-            button1_text_en: "Details",
-            button1_text_vi: "Chi tiết",
-            button2_text_en: "GitHub",
-            button2_text_vi: "GitHub",
-            button2_url: repo.html_url
-          };
-          currentList.push(newProject);
-          hasChanges = true;
-        }
+        const displayName = base.name || (repo.name.charAt(0).toUpperCase() + repo.name.slice(1));
+
+        const project = {
+          ...base,
+          id: repoNameLower,
+          name: displayName,
+          name_vi: base.name_vi || displayName,
+          description: repo.description || base.description || "Open source project from KIYO",
+          description_vi: base.description_vi || repo.description || base.description || "Dự án mã nguồn mở từ KIYO",
+          overview: base.overview || repo.description || "Open source project from KIYO",
+          overview_vi: base.overview_vi || repo.description || "Dự án mã nguồn mở từ KIYO",
+          category: (repo.topics && repo.topics.length) ? repo.topics[0] : (base.category || "Open Source"),
+          category_vi: base.category_vi || ((repo.topics && repo.topics.length) ? repo.topics[0] : "Mã nguồn mở"),
+          language: repo.language || base.language || "Open Source",
+          language_vi: base.language_vi || repo.language || "Mã nguồn mở",
+          status: base.status || "verified",
+          status_vi: base.status_vi || "Đã phát hành",
+          stars: repo.stargazers_count,
+          forks: repo.forks_count,
+          repository: repo.html_url,
+          website: repo.homepage || base.website || repo.html_url,
+          documentation: `${repo.html_url}#readme`,
+          license: repo.license ? (repo.license.spdx_id || repo.license.name) : (base.license || "MIT"),
+          technologies: (repo.topics && repo.topics.length) ? repo.topics : (base.technologies || [repo.language || "Open Source"]),
+          features: base.features || [repo.description || "High-performance open-source project from KIYO"],
+          features_vi: base.features_vi || [repo.description || "Dự án mã nguồn mở hiệu năng cao từ KIYO"],
+          gettingStarted: base.gettingStarted || `git clone ${repo.html_url}.git\ncd ${repo.name}`,
+          button1_text_en: "Details",
+          button1_text_vi: "Chi tiết",
+          button2_text_en: "GitHub",
+          button2_text_vi: "GitHub",
+          button2_url: repo.html_url,
+          // STRICT LOGO RULE:
+          // If GitHub has an SVG logo, use it (cleaned of any background canvas)
+          // If GitHub does NOT have an SVG logo, strictly set to null!
+          logo: logoData ? logoData.url : (base.logo && !base.logo.includes("nom") ? base.logo : null),
+          logoSvg: logoData ? logoData.svg : null
+        };
+
+        syncedList.push(project);
       }
 
-      window.KIYO_PROJECTS = currentList;
+      window.KIYO_PROJECTS = syncedList;
       try {
-        localStorage.setItem("kiyo_synced_projects", JSON.stringify(currentList));
+        localStorage.setItem("kiyo_synced_projects", JSON.stringify(syncedList));
       } catch (e) {}
 
-      // Live re-render
+      // Dynamically re-render all project views
       initHomeProjects();
-      if (typeof catalogRerender === "function") {
-        catalogRerender();
-      }
-      if (typeof detailRerender === "function") {
-        detailRerender();
-      }
+      if (typeof catalogRerender === "function") catalogRerender();
+      if (typeof detailRerender === "function") detailRerender();
       syncCardHeights();
     } catch (err) {
       console.warn("GitHub dynamic sync notice:", err);

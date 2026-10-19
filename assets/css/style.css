@@ -838,41 +838,46 @@ ul, ol {
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
-  border-radius: 7px;
-  box-shadow: none !important; /* Xóa viền mờ đen */
-  padding: 30px 20px 18px 20px;
-  transform: none !important; /* Xóa hiệu ứng di trỏ chuột */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 12px 20px 20px 20px;
+  transform: none !important;
   transition: none !important;
 }
 
 .project-card:hover {
-  transform: none !important; /* Không di chuyển khi rê chuột */
+  transform: none !important;
   box-shadow: none !important;
 }
 
-/* Protruding App Icon at top-left */
+/* App Icon directly above title with zero background box */
 .project-card__icon {
-  position: absolute;
-  top: -20px;
-  left: 20px;
-  width: 44px;
-  height: 44px;
-  z-index: 2;
+  position: static;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
-  border-radius: 7px;
+  border-radius: 0 !important;
   box-shadow: none !important;
-  background: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   transform: none !important;
 }
 
 .project-card__icon svg,
 .project-card__icon img {
-  width: 44px;
-  height: 44px;
-  border-radius: 7px;
+  width: 48px;
+  height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
   display: block;
   object-fit: contain;
 }
@@ -1326,15 +1331,23 @@ ul, ol {
   flex-shrink: 0;
   width: 56px;
   height: 56px;
-  border-radius: 7px;
-  overflow: hidden;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible;
 }
 
 .detail-logo svg,
 .detail-logo img {
   width: 56px;
   height: 56px;
-  border-radius: 7px;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
   display: block;
   object-fit: contain;
 }
