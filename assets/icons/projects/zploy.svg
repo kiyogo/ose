@@ -1,29 +1,38 @@
 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="zpCyan" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+    <linearGradient id="zpBg" x1="0%" y1="0%" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="50%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="zpCyan" x1="0%" y1="0%" x2="56" y2="56" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#38bdf8"/>
       <stop offset="100%" stop-color="#2563eb"/>
     </linearGradient>
-    <linearGradient id="zpLightning" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+    <linearGradient id="zpLightning" x1="0%" y1="0%" x2="56" y2="56" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#00f2fe"/>
       <stop offset="50%" stop-color="#38bdf8"/>
       <stop offset="100%" stop-color="#a855f7"/>
     </linearGradient>
-    <linearGradient id="zpViolet" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+    <linearGradient id="zpViolet" x1="0%" y1="0%" x2="56" y2="56" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#a855f7"/>
       <stop offset="100%" stop-color="#6366f1"/>
     </linearGradient>
     <filter id="zpGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
 
-  <!-- Isometric 'Z' Deployment Symbol - Direct pure emblem with NO background box -->
-  <g transform="translate(1, -1) scale(0.9)" filter="url(#zpGlow)">
+  <!-- Squircle Canvas with subtle stroke -->
+  <rect width="56" height="56" rx="12" fill="url(#zpBg)"/>
+  <rect x="0.5" y="0.5" width="55" height="55" rx="11.5" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1"/>
+
+  <!-- Isometric 'Z' Deployment Symbol -->
+  <g transform="translate(10, 10) scale(0.65)" filter="url(#zpGlow)">
     <!-- Shadow Glow Layer -->
     <path d="M 12,8 L 44,8 L 50,18 L 22,44 L 50,44 L 46,52 L 12,52 L 6,42 L 32,16 L 8,16 Z"
-          fill="url(#zpViolet)" opacity="0.3"/>
+          fill="url(#zpViolet)" opacity="0.35"/>
     <!-- Top arm -->
     <path d="M 12,8 L 48,8 L 42,18 L 20,18 Z" fill="url(#zpCyan)"/>
     <!-- Diagonal spine -->

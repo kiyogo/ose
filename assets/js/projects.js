@@ -796,39 +796,22 @@
   });
 
   /**
-   * Cleans background canvas rects from an SVG so the logo emblem
-   * renders directly and cleanly on transparent background.
+   * Formats raw SVG for 48x48 display while preserving 100% of the SVG elements,
+   * including any background squircle or canvas as designed on GitHub.
    */
-  function cleanSvgBackground(svgText) {
+  function formatSvgForDisplay(svgText) {
     if (!svgText || typeof svgText !== "string") return "";
-    let cleaned = svgText;
-
-    // 1. Remove background rect elements with solid fills or gradients (like #bg-canvas, #090D16, etc.)
-    cleaned = cleaned.replace(/<rect\b[^>]*?(?:fill=["'](?:url\(#[^"']*?bg[^"']*?\)|#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))["'][^>]*?\/?>)/gi, "");
-
-    // 2. Remove stroke rects around icon frames
-    cleaned = cleaned.replace(/<rect\b[^>]*?stroke=["'](?:rgba?\([^)]+\)|#[0-9a-fA-F]+)["'][^>]*?\/?>/gi, "");
-
-    // 3. Remove rect elements with large rounded corners like rx="124" or rx="122" or rx="12"
-    cleaned = cleaned.replace(/<rect\b[^>]*?rx=["'](?:124|122|120|12|14|16|20|7)["'][^>]*?\/?>/gi, "");
-
-    // 4. Remove any rect matching full dimensions (width=100%, 512, 56, etc.)
-    cleaned = cleaned.replace(/<rect\b[^>]*?(?:width=["'](?:100%|512|508|56|880)["'][^>]*?height=["'](?:100%|512|508|56|220)["'])[^>]*?\/?>/gi, "");
-
-    // 5. Ensure root SVG has transparent background, width 48, height 48
-    cleaned = cleaned.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
+    return svgText.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
       let mod = attrs.replace(/\bwidth=["'][^"']*?["']/gi, 'width="48"').replace(/\bheight=["'][^"']*?["']/gi, 'height="48"');
       if (!/width=/i.test(mod)) mod += ' width="48"';
       if (!/height=/i.test(mod)) mod += ' height="48"';
-      return `<svg ${mod} style="background: transparent !important; display: block;">`;
+      return `<svg ${mod} style="display: block; width: 48px; height: 48px; object-fit: contain;">`;
     });
-
-    return cleaned;
   }
 
   /**
    * Probes candidate SVG logo URLs on GitHub raw CDN for a repository.
-   * If an SVG is found, fetches and returns its clean, transparent SVG code and URL.
+   * If an SVG is found, fetches and returns its raw SVG code as-is from GitHub.
    * If NO SVG logo exists on GitHub, strictly returns null.
    */
   async function detectAndFetchRepoSvgLogo(repoName, branch) {
@@ -853,14 +836,14 @@
           if (text && text.includes("<svg")) {
             return {
               url: url,
-              svg: cleanSvgBackground(text)
+              svg: formatSvgForDisplay(text)
             };
           }
         }
       } catch (e) {}
     }
 
-    // Check bundled transparent local icons (only for repos that have an official logo)
+    // Check bundled local icons (only for repos that have an official logo)
     if (nameLower !== "nom") {
       const localIcon = `assets/icons/projects/${nameLower}.svg`;
       try {
@@ -870,7 +853,7 @@
           if (text && text.includes("<svg")) {
             return {
               url: localIcon,
-              svg: cleanSvgBackground(text)
+              svg: formatSvgForDisplay(text)
             };
           }
         }

@@ -163,6 +163,15 @@ try {
           p.logoSvg = null;
           p.iconType = null;
         }
+        // Invalidate any stale stripped logoSvg from previous cache
+        if (p && p.id === "catchim" && p.logoSvg && !p.logoSvg.includes("bg-canvas")) {
+          p.logoSvg = null;
+          p.logo = "assets/icons/projects/catchim.svg";
+        }
+        if (p && p.id === "zploy" && p.logoSvg && !p.logoSvg.includes("zpBg")) {
+          p.logoSvg = null;
+          p.logo = "assets/icons/projects/zploy.svg";
+        }
         return p;
       });
     }
