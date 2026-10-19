@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết dự án — KIYO Open Source</title>
+  <meta name="description" content="Tài liệu kỹ thuật chi tiết và thông số cho dự án mã nguồn mở KIYO.">
+  <meta property="og:title" content="Chi tiết dự án — KIYO Open Source">
+  <meta property="og:description" content="Tài liệu kỹ thuật chi tiết cho dự án KIYO Open Source.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link" data-i18n="skip_content">Chuyển đến nội dung chính</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="KIYO Open Source Home">
+        <img src="assets/icons/kiyo.svg" alt="KIYO Open Source" class="brand__logo">
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav_home">Trang chủ</a>
+        <a href="projects.html" class="nav-link is-active" data-i18n="nav_projects">Dự án</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+
+        <button type="button" id="mobile-menu-btn" class="icon-btn mobile-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer" role="region" aria-label="Mobile Navigation">
+      <nav class="mobile-nav-list">
+        <a href="index.html" class="mobile-nav-link" data-i18n="nav_home">Trang chủ</a>
+        <a href="projects.html" class="mobile-nav-link" data-i18n="nav_projects">Dự án</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div id="project-detail-view">
+      <section class="section section--no-border" style="padding-top: 24px;">
+        <div class="container">
+          <div class="detail-header">
+            <div class="detail-header-inner">
+              <div id="detail-logo" class="detail-logo" aria-hidden="true"></div>
+              <div class="detail-header-meta">
+                <div class="detail-title-row">
+                  <div class="detail-title-group">
+                    <h1 id="detail-title">Project</h1>
+                  </div>
+                  <div id="detail-header-actions" class="detail-header-actions"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-layout">
+            <div class="detail-content">
+              <div id="detail-readme-block" class="detail-block">
+                <div id="detail-readme-loading" class="readme-loading" style="display: none;" hidden>
+                  <div class="readme-spinner"></div>
+                  <span data-i18n="detail_loading_readme">Đang tải tài liệu từ GitHub...</span>
+                </div>
+                <article id="detail-readme" class="readme-body"></article>
+              </div>
+
+              <div id="detail-fallback-blocks" hidden>
+                <div class="detail-block">
+                  <h2 data-i18n="detail_overview_title">Tổng quan</h2>
+                  <p id="detail-overview"></p>
+                </div>
+
+                <div id="detail-features-block" class="detail-block">
+                  <h2 data-i18n="detail_features_title">Tính năng nổi bật</h2>
+                  <ul id="detail-features-list" class="feature-list"></ul>
+                </div>
+
+                <div id="detail-getting-started-block" class="detail-block">
+                  <h2 data-i18n="detail_quickstart_title">Bắt đầu nhanh</h2>
+                  <div class="code-window" style="margin-top: 12px;">
+                    <div class="code-window__body">
+                      <pre id="detail-getting-started-code" class="code-block"></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="detail-sidebar" aria-label="Metadata">
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_language">Ngôn ngữ</span>
+                <span id="sidebar-language" class="sidebar-value">—</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_category">Danh mục</span>
+                <span id="sidebar-category" class="sidebar-value">—</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_status">Trạng thái</span>
+                <span id="sidebar-status" class="sidebar-value">—</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_license">Giấy phép</span>
+                <span id="sidebar-license" class="sidebar-value">—</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_repository">Kho lưu trữ</span>
+                <span id="sidebar-repo" class="sidebar-value">—</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-label" data-i18n="sidebar_tech">Công nghệ</span>
+                <div id="sidebar-technologies" class="tag-list"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="project-not-found" class="section section--no-border" hidden>
+      <div class="container">
+        <div class="empty-state">
+          <h1 style="font-size: 1.5rem; margin-bottom: 16px;" data-i18n="project_not_found_title">Không tìm thấy dự án</h1>
+          <a href="projects.html" class="btn btn--primary" data-i18n="project_not_found_btn">Quay lại danh sách</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="brand">
+            <img src="assets/icons/kiyo.svg" alt="KIYO Open Source" class="brand__logo brand__logo--footer">
+          </a>
+          <p data-i18n="footer_tagline">"Cùng nhau phát triển."</p>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_explore_title">Khám phá</h4>
+          <ul class="footer-links">
+            <li><a href="projects.html" data-i18n="footer_projects">Dự án</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_resources_title">Tài nguyên</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/kiyogo" target="_blank" rel="noopener noreferrer" data-i18n="footer_github">GitHub</a></li>
+            <li><a href="https://github.com/kiyogo" target="_blank" rel="noopener noreferrer" data-i18n="footer_documentation">Tài liệu</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_org_title">Tổ chức</h4>
+          <ul class="footer-links">
+            <li><a href="https://kiyovn.com" target="_blank" rel="noopener noreferrer">KIYO</a></li>
+            <li><a href="https://kiyovn.com/contact" target="_blank" rel="noopener noreferrer" data-i18n="footer_contact">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span data-i18n="footer_copyright">© 2026 KIYO. Mã nguồn mở, tương lai rộng mở.</span>
+        
+        <div class="footer-bottom-actions">
+          <div class="footer-lang-wrap">
+            <svg class="footer-lang-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <select id="footer-lang-select" class="footer-lang-select" aria-label="Chọn ngôn ngữ / Select language">
+              <option value="vi">Tiếng Việt</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/marked.min.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/projects.js"></script>
+</body>
+</html>
