@@ -153,27 +153,33 @@ const defaultProjects = [
 // Load any cached dynamic projects from localStorage if available
 let initialProjects = defaultProjects;
 try {
-  const cachedJson = localStorage.getItem("kiyo_synced_projects");
-  if (cachedJson) {
-    const parsed = JSON.parse(cachedJson);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      initialProjects = parsed.map(function(p) {
-        if (p && (p.id === "nom" || p.name === "Nom")) {
-          p.logo = null;
-          p.logoSvg = null;
-          p.iconType = null;
-        }
-        // Invalidate any stale stripped logoSvg from previous cache
-        if (p && p.id === "catchim" && p.logoSvg && !p.logoSvg.includes("bg-canvas")) {
-          p.logoSvg = null;
-          p.logo = "assets/icons/projects/catchim.svg";
-        }
-        if (p && p.id === "zploy" && p.logoSvg && !p.logoSvg.includes("zpBg")) {
-          p.logoSvg = null;
-          p.logo = "assets/icons/projects/zploy.svg";
-        }
-        return p;
-      });
+  const currentCacheVer = localStorage.getItem("kiyo_cache_version");
+  if (currentCacheVer !== "2.2") {
+    // Invalidate old cache containing squircle rect backgrounds
+    localStorage.removeItem("kiyo_synced_projects");
+    localStorage.setItem("kiyo_cache_version", "2.2");
+  } else {
+    const cachedJson = localStorage.getItem("kiyo_synced_projects");
+    if (cachedJson) {
+      const parsed = JSON.parse(cachedJson);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        initialProjects = parsed
+          .filter(function (p) {
+            return p && p.id !== "ose" && p.id !== "web";
+          })
+          .map(function (p) {
+            if (p && (p.id === "nom" || p.name === "Nom")) {
+              p.logo = null;
+              p.logoSvg = null;
+              p.iconType = null;
+            }
+            // Clear any stale cached squircle background SVGs
+            if (p && p.logoSvg && (p.logoSvg.includes("<rect") || p.logoSvg.includes("bg-canvas") || p.logoSvg.includes("zpBg"))) {
+              p.logoSvg = null;
+            }
+            return p;
+          });
+      }
     }
   }
 } catch (e) {

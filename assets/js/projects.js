@@ -638,13 +638,8 @@
 
     const logoEl = document.getElementById("detail-logo");
     if (logoEl) {
-      if (project.logoSvg || project.logo) {
-        logoEl.style.display = "inline-flex";
-        logoEl.innerHTML = getProjectIconSvg(project.iconType, project);
-      } else {
-        logoEl.style.display = "none";
-        logoEl.innerHTML = "";
-      }
+      logoEl.style.display = "none";
+      logoEl.innerHTML = "";
     }
 
     const statusEl = document.getElementById("detail-status-badge");
@@ -796,51 +791,100 @@
   });
 
   /**
-   * Formats raw SVG for 48x48 display while preserving 100% of the SVG elements,
-   * including any background squircle or canvas as designed on GitHub.
+   * Cleans any background squircle, canvas, or box from an SVG,
+   * ensuring the emblem displays directly on 100% transparent background with NO black background.
    */
-  function formatSvgForDisplay(svgText) {
+  function cleanSvgToTransparent(svgText) {
     if (!svgText || typeof svgText !== "string") return "";
-    return svgText.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
+    let cleaned = svgText;
+
+    // 1. Remove background rect elements with solid fills or gradients (like #bg-canvas, #090D16, #0b0f19, #0F172A, #111827, etc.)
+    cleaned = cleaned.replace(/<rect\b[^>]*?fill=["'](?:url\(#[^"']*?(?:bg|canvas|card|container|zpBg|bgGrad)[^"']*?\)|#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))["'][^>]*?\/?>/gi, "");
+
+    // 2. Remove stroke-only frame rects around icon frames
+    cleaned = cleaned.replace(/<rect\b[^>]*?stroke=["'][^>]*?\/?>/gi, "");
+
+    // 3. Remove rect elements with corner rounding rx >= 8
+    cleaned = cleaned.replace(/<rect\b[^>]*?rx=["'](?:\d{2,})["'][^>]*?\/?>/gi, "");
+
+    // 4. Remove any rect matching full dimensions (width=100%, 512, 508, 220, 218, 56, 55, 880, etc.)
+    cleaned = cleaned.replace(/<rect\b[^>]*?(?:width=["'](?:100%|512|508|220|218|56|55|880)["'])[^>]*?\/?>/gi, "");
+
+    // 5. Ensure root SVG has transparent background, width 48, height 48
+    cleaned = cleaned.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
       let mod = attrs.replace(/\bwidth=["'][^"']*?["']/gi, 'width="48"').replace(/\bheight=["'][^"']*?["']/gi, 'height="48"');
       if (!/width=/i.test(mod)) mod += ' width="48"';
       if (!/height=/i.test(mod)) mod += ' height="48"';
-      return `<svg ${mod} style="display: block; width: 48px; height: 48px; object-fit: contain;">`;
+      return `<svg ${mod} style="background: transparent !important; display: block; width: 48px; height: 48px; object-fit: contain;">`;
     });
+
+    return cleaned;
   }
 
   /**
    * Probes candidate SVG logo URLs on GitHub raw CDN for a repository.
-   * If an SVG is found, fetches and returns its raw SVG code as-is from GitHub.
+   * If an SVG is found, fetches and returns its clean, transparent SVG code and URL.
    * If NO SVG logo exists on GitHub, strictly returns null.
    */
   async function detectAndFetchRepoSvgLogo(repoName, branch) {
     const br = branch || "main";
     const nameLower = repoName.toLowerCase();
 
-    // Check GitHub raw CDN candidates
-    const candidates = [
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/assets/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/public/assets/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/docs/logo.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/icon.svg`,
-      `https://raw.githubusercontent.com/kiyogo/${repoName}/${br}/assets/icon.svg`
+    // Check multiple candidate branches on GitHub raw CDN
+    const branches = [br, "main", "master"].filter(function (v, i, a) { return a.indexOf(v) === i; });
+
+    // Check candidate SVG paths on GitHub raw CDN
+    const svgPaths = [
+      "logo.svg",
+      "assets/logo.svg",
+      "public/assets/logo.svg",
+      "docs/logo.svg",
+      "icon.svg",
+      "assets/icon.svg",
+      "assets/icons/logo.svg",
+      "assets/images/logo.svg"
     ];
 
-    for (const url of candidates) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) {
-          const text = await res.text();
-          if (text && text.includes("<svg")) {
+    for (const b of branches) {
+      for (const p of svgPaths) {
+        const url = `https://raw.githubusercontent.com/kiyogo/${repoName}/${b}/${p}`;
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const text = await res.text();
+            if (text && text.includes("<svg")) {
+              return {
+                url: url,
+                svg: cleanSvgToTransparent(text)
+              };
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Check candidate image paths (PNG / WebP)
+    const imgPaths = [
+      "logo.png",
+      "assets/logo.png",
+      "public/assets/logo.png",
+      "icon.png",
+      "assets/icon.png"
+    ];
+
+    for (const b of branches) {
+      for (const p of imgPaths) {
+        const url = `https://raw.githubusercontent.com/kiyogo/${repoName}/${b}/${p}`;
+        try {
+          const res = await fetch(url, { method: "HEAD" });
+          if (res.ok) {
             return {
               url: url,
-              svg: formatSvgForDisplay(text)
+              svg: null
             };
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
     }
 
     // Check bundled local icons (only for repos that have an official logo)
@@ -853,7 +897,7 @@
           if (text && text.includes("<svg")) {
             return {
               url: localIcon,
-              svg: formatSvgForDisplay(text)
+              svg: cleanSvgToTransparent(text)
             };
           }
         }
@@ -900,12 +944,31 @@
       }
 
       if (!Array.isArray(repos) || repos.length === 0) {
-        return; // Offline or rate limited, keep current state
+        // Fallback when GitHub API is rate-limited: Still fetch authentic logos directly from GitHub raw CDN!
+        const currentProjects = window.KIYO_PROJECTS || defaultProjects;
+        let changed = false;
+        for (const proj of currentProjects) {
+          if (proj && proj.id && proj.id !== "nom" && proj.id !== "ose" && proj.id !== "web") {
+            const logoData = await detectAndFetchRepoSvgLogo(proj.id, "main");
+            if (logoData) {
+              proj.logo = logoData.url;
+              proj.logoSvg = logoData.svg;
+              changed = true;
+            }
+          }
+        }
+        if (changed) {
+          initHomeProjects();
+          if (typeof catalogRerender === "function") catalogRerender();
+        }
+        return;
       }
 
-      // Filter out internal metadata repos (.github, etc.)
+      // Filter out internal metadata repos (.github, portal web/ose, etc.)
       const softwareRepos = repos.filter(function (r) {
-        return r && r.name && !r.name.startsWith(".") && !r.fork && r.name.toLowerCase() !== "kiyogo";
+        if (!r || !r.name) return false;
+        const n = r.name.toLowerCase();
+        return !n.startsWith(".") && !r.fork && n !== "kiyogo" && n !== "ose" && n !== "web";
       });
 
       // Build dictionary of base / rich details from defaultProjects & KIYO_PROJECTS
@@ -969,9 +1032,9 @@
           button2_text_vi: "GitHub",
           button2_url: repo.html_url,
           // STRICT LOGO RULE:
-          // If GitHub has an SVG logo, use it (cleaned of any background canvas)
-          // If GitHub does NOT have an SVG logo, strictly set to null!
-          logo: logoData ? logoData.url : (base.logo && !base.logo.includes("nom") ? base.logo : null),
+          // If GitHub has a logo, use it (cleaned of any background canvas)
+          // If GitHub does NOT have a logo, strictly set to null!
+          logo: logoData ? logoData.url : null,
           logoSvg: logoData ? logoData.svg : null
         };
 

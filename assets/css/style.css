@@ -1390,32 +1390,9 @@ ul, ol {
   max-width: 100%;
 }
 
-.detail-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 56px;
-  height: 56px;
-  border-radius: 0 !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  overflow: visible;
-}
-
-.detail-logo svg,
-.detail-logo img {
-  width: 56px;
-  height: 56px;
-  border-radius: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  display: block;
-  object-fit: contain;
+.detail-logo,
+#detail-logo {
+  display: none !important;
 }
 
 .detail-header-meta {
@@ -2017,5 +1994,16 @@ ul, ol {
   border: none;
   border-top: 1px solid rgba(148, 163, 184, 0.2);
   margin: 1.75rem 0;
+}
+
+/* Ensure project detail page never displays logo icon next to title */
+#detail-logo,
+.detail-logo {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
