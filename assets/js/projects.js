@@ -61,14 +61,17 @@
     const article = document.createElement("article");
     article.className = "project-card";
 
-    // Direct App Icon (Only added if the project actually has a logo on GitHub!)
+    // App Icon / Spacer Row (ensures title baseline alignment across all cards)
     const hasLogo = Boolean(project.logoSvg || project.logo);
+    const iconWrap = document.createElement("div");
+    iconWrap.className = "project-card__icon";
     if (hasLogo) {
-      const iconWrap = document.createElement("div");
-      iconWrap.className = "project-card__icon";
       iconWrap.innerHTML = getProjectIconSvg(project.iconType, project);
-      article.appendChild(iconWrap);
+    } else {
+      iconWrap.classList.add("project-card__icon--empty");
+      iconWrap.setAttribute("aria-hidden", "true");
     }
+    article.appendChild(iconWrap);
 
     // Card Content Wrapper
     const content = document.createElement("div");
@@ -791,39 +794,24 @@
   });
 
   /**
-   * Cleans any background squircle, canvas, or box from an SVG,
-   * ensuring the emblem displays directly on 100% transparent background with NO black background.
+   * Formats raw SVG for 48x48 display while preserving 100% of authentic SVG elements
+   * (including any squircle container or background canvas as designed on GitHub).
    */
-  function cleanSvgToTransparent(svgText) {
+  function formatSvgForDisplay(svgText) {
     if (!svgText || typeof svgText !== "string") return "";
-    let cleaned = svgText;
-
-    // 1. Remove background rect elements with solid fills or gradients (like #bg-canvas, #090D16, #0b0f19, #0F172A, #111827, etc.)
-    cleaned = cleaned.replace(/<rect\b[^>]*?fill=["'](?:url\(#[^"']*?(?:bg|canvas|card|container|zpBg|bgGrad)[^"']*?\)|#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))["'][^>]*?\/?>/gi, "");
-
-    // 2. Remove stroke-only frame rects around icon frames
-    cleaned = cleaned.replace(/<rect\b[^>]*?stroke=["'][^>]*?\/?>/gi, "");
-
-    // 3. Remove rect elements with corner rounding rx >= 8
-    cleaned = cleaned.replace(/<rect\b[^>]*?rx=["'](?:\d{2,})["'][^>]*?\/?>/gi, "");
-
-    // 4. Remove any rect matching full dimensions (width=100%, 512, 508, 220, 218, 56, 55, 880, etc.)
-    cleaned = cleaned.replace(/<rect\b[^>]*?(?:width=["'](?:100%|512|508|220|218|56|55|880)["'])[^>]*?\/?>/gi, "");
-
-    // 5. Ensure root SVG has transparent background, width 48, height 48
-    cleaned = cleaned.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
-      let mod = attrs.replace(/\bwidth=["'][^"']*?["']/gi, 'width="48"').replace(/\bheight=["'][^"']*?["']/gi, 'height="48"');
+    return svgText.replace(/<svg\b([^>]*?)>/i, function (match, attrs) {
+      let mod = attrs
+        .replace(/\bwidth=["'][^"']*?["']/gi, 'width="48"')
+        .replace(/\bheight=["'][^"']*?["']/gi, 'height="48"');
       if (!/width=/i.test(mod)) mod += ' width="48"';
       if (!/height=/i.test(mod)) mod += ' height="48"';
-      return `<svg ${mod} style="background: transparent !important; display: block; width: 48px; height: 48px; object-fit: contain;">`;
+      return `<svg ${mod} style="display: block; width: 48px; height: 48px; object-fit: contain;">`;
     });
-
-    return cleaned;
   }
 
   /**
    * Probes candidate SVG logo URLs on GitHub raw CDN for a repository.
-   * If an SVG is found, fetches and returns its clean, transparent SVG code and URL.
+   * If an SVG is found, fetches and returns its authentic SVG code and URL as designed on GitHub.
    * If NO SVG logo exists on GitHub, strictly returns null.
    */
   async function detectAndFetchRepoSvgLogo(repoName, branch) {
@@ -855,7 +843,7 @@
             if (text && text.includes("<svg")) {
               return {
                 url: url,
-                svg: cleanSvgToTransparent(text)
+                svg: formatSvgForDisplay(text)
               };
             }
           }
@@ -897,7 +885,7 @@
           if (text && text.includes("<svg")) {
             return {
               url: localIcon,
-              svg: cleanSvgToTransparent(text)
+              svg: formatSvgForDisplay(text)
             };
           }
         }

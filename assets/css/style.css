@@ -933,6 +933,11 @@ ul, ol {
   transform: none !important;
 }
 
+.project-card__icon--empty {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 .project-card__icon svg,
 .project-card__icon img {
   width: 48px;

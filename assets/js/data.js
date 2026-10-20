@@ -154,10 +154,10 @@ const defaultProjects = [
 let initialProjects = defaultProjects;
 try {
   const currentCacheVer = localStorage.getItem("kiyo_cache_version");
-  if (currentCacheVer !== "2.2") {
-    // Invalidate old cache containing squircle rect backgrounds
+  if (currentCacheVer !== "2.4") {
+    // Invalidate old cache to ensure authentic GitHub logos load fresh
     localStorage.removeItem("kiyo_synced_projects");
-    localStorage.setItem("kiyo_cache_version", "2.2");
+    localStorage.setItem("kiyo_cache_version", "2.4");
   } else {
     const cachedJson = localStorage.getItem("kiyo_synced_projects");
     if (cachedJson) {
@@ -173,8 +173,8 @@ try {
               p.logoSvg = null;
               p.iconType = null;
             }
-            // Clear any stale cached squircle background SVGs
-            if (p && p.logoSvg && (p.logoSvg.includes("<rect") || p.logoSvg.includes("bg-canvas") || p.logoSvg.includes("zpBg"))) {
+            // Clear any stale blurred circles or fake backgrounds in zploy
+            if (p && p.id === "zploy" && p.logoSvg && (p.logoSvg.includes("cx=\"110\"") || p.logoSvg.includes("zpBg"))) {
               p.logoSvg = null;
             }
             return p;
