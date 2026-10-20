@@ -29,15 +29,15 @@
   function getProjectIconSvg(iconType, project) {
     if (!project) return "";
 
-    // 1. Cleaned direct inline SVG (without background canvas box)
-    if (typeof project.logoSvg === "string" && project.logoSvg.trim().startsWith("<svg")) {
-      return project.logoSvg;
-    }
-
-    // 2. Direct logo URL (SVG / PNG)
+    // 1. Direct logo URL from GitHub CDN (SVG / PNG)
     const logoUrl = project.logo || project.logoUrl;
     if (logoUrl) {
-      return `<img src="${logoUrl}" alt="${project.name || 'Project'}" width="48" height="48" style="width: 48px; height: 48px; object-fit: contain; display: block; background: transparent !important; border: none !important; box-shadow: none !important;" onerror="this.onerror=null; if(this.parentElement) this.parentElement.style.display='none';">`;
+      return `<img src="${logoUrl}" alt="${project.name || 'Project'}" width="48" height="48" style="width: 48px; height: 48px; object-fit: contain; display: block; background: transparent !important; border: none !important; box-shadow: none !important;" onerror="this.onerror=null; if(this.parentElement) this.parentElement.classList.add('project-card__icon--empty');">`;
+    }
+
+    // 2. Direct inline SVG if available
+    if (typeof project.logoSvg === "string" && project.logoSvg.trim().startsWith("<svg")) {
+      return project.logoSvg;
     }
 
     // 3. STRICT: No logo on GitHub -> return empty string!
@@ -873,23 +873,6 @@
           }
         } catch (e) {}
       }
-    }
-
-    // Check bundled local icons (only for repos that have an official logo)
-    if (nameLower !== "nom") {
-      const localIcon = `assets/icons/projects/${nameLower}.svg`;
-      try {
-        const res = await fetch(localIcon);
-        if (res.ok) {
-          const text = await res.text();
-          if (text && text.includes("<svg")) {
-            return {
-              url: localIcon,
-              svg: formatSvgForDisplay(text)
-            };
-          }
-        }
-      } catch (e) {}
     }
 
     // STRICT: No logo found on GitHub -> return null

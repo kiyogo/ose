@@ -31,8 +31,7 @@ const defaultProjects = [
     status: "verified",
     status_vi: "Đã phát hành",
     iconType: "zploy",
-    logo: "assets/icons/projects/zploy.svg",
-    logoFallbackUrl: "https://raw.githubusercontent.com/kiyogo/zploy/main/assets/logo.svg",
+    logo: "https://raw.githubusercontent.com/kiyogo/zploy/main/logo.svg",
     repository: "https://github.com/kiyogo/zploy",
     website: "https://github.com/kiyogo/zploy",
     documentation: "https://github.com/kiyogo/zploy#readme",
@@ -78,7 +77,7 @@ const defaultProjects = [
     status: "verified",
     status_vi: "Đã phát hành",
     iconType: "catchim",
-    logo: "assets/icons/projects/catchim.svg",
+    logo: "https://raw.githubusercontent.com/kiyogo/catchim/main/logo.svg",
     logoFallbackUrl: "https://raw.githubusercontent.com/kiyogo/catchim/main/logo.svg",
     repository: "https://github.com/kiyogo/catchim",
     website: "https://github.com/kiyogo/catchim",
@@ -154,10 +153,10 @@ const defaultProjects = [
 let initialProjects = defaultProjects;
 try {
   const currentCacheVer = localStorage.getItem("kiyo_cache_version");
-  if (currentCacheVer !== "2.4") {
-    // Invalidate old cache to ensure authentic GitHub logos load fresh
+  if (currentCacheVer !== "3.0") {
+    // Invalidate old cache to ensure authentic GitHub CDN logos load fresh
     localStorage.removeItem("kiyo_synced_projects");
-    localStorage.setItem("kiyo_cache_version", "2.4");
+    localStorage.setItem("kiyo_cache_version", "3.0");
   } else {
     const cachedJson = localStorage.getItem("kiyo_synced_projects");
     if (cachedJson) {
@@ -173,9 +172,9 @@ try {
               p.logoSvg = null;
               p.iconType = null;
             }
-            // Clear any stale blurred circles or fake backgrounds in zploy
-            if (p && p.id === "zploy" && p.logoSvg && (p.logoSvg.includes("cx=\"110\"") || p.logoSvg.includes("zpBg"))) {
-              p.logoSvg = null;
+            // Enforce GitHub raw CDN URL over local relative paths
+            if (p && p.logo && p.logo.includes("assets/icons/projects/")) {
+              p.logo = "https://raw.githubusercontent.com/kiyogo/" + p.id + "/main/logo.svg";
             }
             return p;
           });
